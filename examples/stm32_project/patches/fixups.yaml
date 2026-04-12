@@ -1,0 +1,22 @@
+# Vendor fixup patches for the example project.
+#
+# These demonstrate common patch patterns applied to the minimal test SVD.
+
+# Improve a register description that's too terse in the vendor SVD
+- target: "GPIOA.MODER"
+  set:
+    description: "GPIO port A mode register — controls pin direction and function"
+
+# Fix the reset value that the vendor got wrong
+- target: "GPIOA.ODR"
+  set:
+    reset_value: 0x00000000
+    description: "GPIO port A output data register"
+
+# Rename a field to follow our project naming convention
+- target: "GPIOA.MODER.MODE1"
+  rename: "MODER1"
+
+# Disable GPIOB — we don't use it on this board, so skip it in generation
+- target: "GPIOB"
+  disable: true

@@ -1,0 +1,22 @@
+# Example svdgen project configuration.
+#
+# Run from the repository root:
+#   svdgen generate -c examples/svdgen.toml
+
+[project]
+name = "example"
+description = "Minimal example project using the test fixture SVD."
+
+[input]
+svd = "../tests/fixtures/minimal.svd"
+
+[output]
+dir = "examples/output"
+overwrite = true
+skip_unchanged = true
+
+[[targets]]
+name = "c_headers"
+template = "c_header/peripheral.h.j2"
+output_path = "include/{{ peripheral.name | lower }}.h"
+scope = "peripheral"

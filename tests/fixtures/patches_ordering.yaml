@@ -1,0 +1,9 @@
+# First patch sets description
+- target: "GPIOA.MODER"
+  set:
+    description: "first"
+
+# Second patch overrides it
+- target: "GPIOA.MODER"
+  set:
+    description: "second"

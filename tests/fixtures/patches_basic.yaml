@@ -1,0 +1,10 @@
+- target: "GPIOA.MODER"
+  set:
+    description: "Patched mode register"
+    reset_value: 0xFFFFFFFF
+
+- target: "GPIOA.MODER.MODE1"
+  rename: "MODER_BIT1"
+
+- target: "GPIOA.ODR.OD0"
+  disable: true

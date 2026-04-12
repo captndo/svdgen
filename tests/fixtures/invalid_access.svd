@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD.xsd">
+  <name>WarnDevice</name>
+  <version>1.0</version>
+  <description>Device with an invalid access type to trigger a cmsis-svd warning</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+
+  <peripherals>
+    <peripheral>
+      <name>TEST</name>
+      <description>Test peripheral</description>
+      <baseAddress>0x40000000</baseAddress>
+      <registers>
+        <register>
+          <name>REG0</name>
+          <description>Register with bad access type</description>
+          <addressOffset>0x00</addressOffset>
+          <size>32</size>
+          <access>banana</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FIELD0</name>
+              <description>Test field</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+          </fields>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>

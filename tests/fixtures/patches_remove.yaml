@@ -1,0 +1,2 @@
+- target: "GPIOA.ODR"
+  remove: true

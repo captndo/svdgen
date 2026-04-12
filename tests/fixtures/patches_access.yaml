@@ -1,0 +1,7 @@
+- target: "GPIOA.MODER"
+  set:
+    access: "read-only"
+
+- target: "GPIOA.MODER.MODE0"
+  set:
+    access: "write-only"

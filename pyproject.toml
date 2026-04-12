@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "svdgen"
+version = "0.1.0"
+description = "OSS hardware description generation engine — parse CMSIS-SVD, patch, and render arbitrary text artifacts through templates."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [
+    {name = "Stilian Dimitrov", email = "captndo@gmail.com"},
+]
+keywords = ["svd", "cmsis", "embedded", "code-generation", "jinja2", "hardware"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Embedded Systems",
+]
+dependencies = [
+    "cmsis-svd>=0.6",
+    "jinja2>=3.1.6",
+    "lxml>=6.0",
+    "pyyaml>=6.0.3",
+    "tomli>=2.4.1; python_version < '3.11'",
+    "typer>=0.24.1",
+]
+
+[project.urls]
+Repository = "https://github.com/captndo/svdgen"
+Issues     = "https://github.com/captndo/svdgen/issues"
+
+[project.scripts]
+svdgen = "svdgen.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0",
+    "ruff>=0.15",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["svdgen"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]

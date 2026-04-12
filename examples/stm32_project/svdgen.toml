@@ -1,0 +1,50 @@
+# Example svdgen project — mimics a real STM32 BSP workflow.
+#
+# Run from the repository root:
+#   svdgen generate -c examples/stm32_project/svdgen.toml
+#
+# Or from within this directory:
+#   cd examples/stm32_project && svdgen generate
+
+[project]
+name = "stm32-bsp-example"
+description = "Example BSP generation from a minimal SVD with patches and two output targets."
+
+[input]
+svd = "../../tests/fixtures/minimal.svd"
+
+[patches]
+files = [
+    "patches/fixups.yaml",
+]
+
+[templates]
+dirs = ["templates"]
+
+[output]
+dir = "output"
+overwrite = true
+skip_unchanged = true
+
+# Target 1: C headers — one file per peripheral
+[[targets]]
+name = "c_headers"
+template = "c_header/peripheral.h.j2"
+output_path = "include/{{ peripheral.name | lower }}.h"
+scope = "peripheral"
+
+# Target 2: Markdown register map — one file for the whole device
+[[targets]]
+name = "register_map"
+template = "regmap.md.j2"
+output_path = "docs/register_map.md"
+scope = "device"
+
+[targets.variables]
+copyright = "2026 Example Corp"
+
+[generation]
+include_timestamp = false
+
+[validation]
+strict = false
