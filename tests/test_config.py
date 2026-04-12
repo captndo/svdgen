@@ -26,7 +26,9 @@ def _write_config(tmp_path: Path, toml: str, svd: bool = True) -> Path:
 
 class TestLoadConfig:
     def test_minimal(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [input]
 svd = "device.svd"
 
@@ -34,7 +36,8 @@ svd = "device.svd"
 name = "hdr"
 template = "t.j2"
 output_path = "out.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         assert isinstance(config, ProjectConfig)
         assert config.input.svd == tmp_path / "device.svd"
@@ -42,12 +45,15 @@ output_path = "out.h"
         assert config.targets[0].name == "hdr"
 
     def test_defaults(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "x"
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         assert config.output.overwrite is True
         assert config.output.skip_unchanged is True
@@ -56,7 +62,9 @@ output_path = "o.h"
 
     def test_full_config(self, tmp_path: Path):
         (tmp_path / "tpl").mkdir()
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [project]
 name = "myproject"
 description = "test"
@@ -89,7 +97,8 @@ include_timestamp = true
 
 [validation]
 strict = true
-""")
+""",
+        )
         config = load_config(cfg_path)
         assert config.project_name == "myproject"
         assert len(config.patches.files) == 2
@@ -107,7 +116,9 @@ strict = true
     def test_paths_relative_to_config_dir(self, tmp_path: Path):
         sub = tmp_path / "sub"
         sub.mkdir()
-        cfg_path = _write_config(sub, """
+        cfg_path = _write_config(
+            sub,
+            """
 [input]
 svd = "chip.svd"
 
@@ -115,26 +126,34 @@ svd = "chip.svd"
 name = "t"
 template = "t.j2"
 output_path = "o.h"
-""", svd=False)
+""",
+            svd=False,
+        )
         (sub / "chip.svd").write_text("<device/>")
         config = load_config(cfg_path)
         assert config.input.svd == sub / "chip.svd"
 
     def test_missing_target_name(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         with pytest.raises(ValueError, match="name"):
             load_config(cfg_path)
 
     def test_missing_target_template(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "x"
 output_path = "o.h"
-""")
+""",
+        )
         with pytest.raises(ValueError, match="template"):
             load_config(cfg_path)
 
@@ -144,7 +163,9 @@ output_path = "o.h"
         assert len(config.targets) == 0
 
     def test_multiple_targets(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "a"
 template = "a.j2"
@@ -155,7 +176,8 @@ name = "b"
 template = "b.j2"
 output_path = "b.h"
 scope = "register"
-""")
+""",
+        )
         config = load_config(cfg_path)
         assert len(config.targets) == 2
         assert config.targets[1].scope == "register"
@@ -168,7 +190,9 @@ scope = "register"
 
 class TestValidateConfig:
     def test_valid_config(self, tmp_path: Path, minimal_svd: Path):
-        cfg_path = _write_config(tmp_path, f"""
+        cfg_path = _write_config(
+            tmp_path,
+            f"""
 [input]
 svd = "{minimal_svd}"
 
@@ -176,14 +200,18 @@ svd = "{minimal_svd}"
 name = "hdr"
 template = "c_header/peripheral.h.j2"
 output_path = "out.h"
-""", svd=False)
+""",
+            svd=False,
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert errors == []
 
     def test_missing_svd(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [input]
 svd = "nonexistent.svd"
 
@@ -191,14 +219,18 @@ svd = "nonexistent.svd"
 name = "t"
 template = "t.j2"
 output_path = "o.h"
-""", svd=False)
+""",
+            svd=False,
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert any("SVD" in e.message or "svd" in e.message.lower() for e in errors)
 
     def test_missing_patch_file(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [patches]
 files = ["nope.yaml"]
 
@@ -206,27 +238,33 @@ files = ["nope.yaml"]
 name = "t"
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert any("nope.yaml" in e.message for e in errors)
 
     def test_invalid_scope(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "t"
 template = "t.j2"
 output_path = "o.h"
 scope = "banana"
-""")
+""",
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert any("banana" in e.message for e in errors)
 
     def test_duplicate_target_names(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "dup"
 template = "a.j2"
@@ -236,14 +274,17 @@ output_path = "a.h"
 name = "dup"
 template = "b.j2"
 output_path = "b.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert any("dup" in e.message.lower() for e in errors)
 
     def test_missing_template_dir(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [templates]
 dirs = ["nonexistent_dir"]
 
@@ -251,19 +292,23 @@ dirs = ["nonexistent_dir"]
 name = "t"
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         errors = [d for d in diags if d.severity == Severity.ERROR]
         assert any("nonexistent_dir" in e.message for e in errors)
 
     def test_unresolvable_template_warns(self, tmp_path: Path):
-        cfg_path = _write_config(tmp_path, """
+        cfg_path = _write_config(
+            tmp_path,
+            """
 [[targets]]
 name = "t"
 template = "no_such_template.j2"
 output_path = "o.h"
-""")
+""",
+        )
         config = load_config(cfg_path)
         diags = validate_config(config)
         warnings = [d for d in diags if d.severity == Severity.WARNING]

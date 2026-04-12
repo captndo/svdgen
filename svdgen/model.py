@@ -19,6 +19,7 @@ from enum import Enum
 # Enums
 # ---------------------------------------------------------------------------
 
+
 class AccessType(Enum):
     """Register or field access permissions (mirrors CMSIS-SVD access types)."""
 
@@ -41,6 +42,7 @@ class EndianType(Enum):
 # ---------------------------------------------------------------------------
 # Leaf entities
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class EnumeratedValue:
@@ -84,6 +86,7 @@ class AddressBlock:
 # Field
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class Field:
     """A bit-field within a register.
@@ -119,6 +122,7 @@ class Field:
 # Register
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class Register:
     """A memory-mapped register within a peripheral."""
@@ -142,6 +146,7 @@ class Register:
 # Peripheral
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class Peripheral:
     """A hardware peripheral containing registers, interrupts, and address blocks."""
@@ -163,6 +168,7 @@ class Peripheral:
 # CPU
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class CPU:
     """CPU metadata from the SVD device definition."""
@@ -179,6 +185,7 @@ class CPU:
 # ---------------------------------------------------------------------------
 # Device (root)
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class Device:

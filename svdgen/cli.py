@@ -148,9 +148,7 @@ def _resolve_selector(device, selector: str):
             reg = r
             break
     if reg is None:
-        typer.echo(
-            f"Register not found: {parts[1]!r} in {parts[0]!r}", err=True
-        )
+        typer.echo(f"Register not found: {parts[1]!r} in {parts[0]!r}", err=True)
         raise typer.Exit(EXIT_FAILURE)
     if len(parts) == 2:
         return reg, "register"
@@ -236,10 +234,7 @@ def validate(
         if errors:
             typer.echo(f"Validation failed: {errors} error(s), {warnings} warning(s).")
         else:
-            typer.echo(
-                "Validation passed."
-                + (f" {warnings} warning(s)." if warnings else "")
-            )
+            typer.echo("Validation passed." + (f" {warnings} warning(s)." if warnings else ""))
 
     if not result.success:
         raise typer.Exit(EXIT_FAILURE)
@@ -247,9 +242,7 @@ def validate(
 
 @app.command()
 def inspect(
-    selector: Annotated[
-        str, typer.Argument(help="Element selector: PERIPH[.REG[.FIELD]]")
-    ] = "",
+    selector: Annotated[str, typer.Argument(help="Element selector: PERIPH[.REG[.FIELD]]")] = "",
     config: ConfigOption = Path("svdgen.toml"),
     json_output: JsonFlag = False,
     verbose: VerboseFlag = False,
@@ -332,12 +325,8 @@ class ListResource(str, Enum):
 
 @app.command("list")
 def list_cmd(
-    resource: Annotated[
-        ListResource, typer.Argument(help="What to list.")
-    ],
-    filter: Annotated[
-        str, typer.Argument(help="Optional filter (e.g. peripheral name).")
-    ] = "",
+    resource: Annotated[ListResource, typer.Argument(help="What to list.")],
+    filter: Annotated[str, typer.Argument(help="Optional filter (e.g. peripheral name).")] = "",
     config: ConfigOption = Path("svdgen.toml"),
     json_output: JsonFlag = False,
     verbose: VerboseFlag = False,
@@ -371,9 +360,10 @@ def _list_targets(config: Path, json_output: bool) -> None:
         if not items:
             typer.echo("No targets configured.")
             return
-        _table(["Name", "Scope", "Template", "Output Path"], [
-            [i["name"], i["scope"], i["template"], i["output_path"]] for i in items
-        ])
+        _table(
+            ["Name", "Scope", "Template", "Output Path"],
+            [[i["name"], i["scope"], i["template"], i["output_path"]] for i in items],
+        )
 
 
 def _list_peripherals(device, json_output: bool) -> None:
@@ -390,10 +380,13 @@ def _list_peripherals(device, json_output: bool) -> None:
     if json_output:
         typer.echo(json.dumps(items, indent=2))
     else:
-        _table(["Name", "Base Address", "Regs", "Description"], [
-            [i["name"], i["base_address"], str(i["registers"]), i["description"] or ""]
-            for i in items
-        ])
+        _table(
+            ["Name", "Base Address", "Regs", "Description"],
+            [
+                [i["name"], i["base_address"], str(i["registers"]), i["description"] or ""]
+                for i in items
+            ],
+        )
 
 
 def _list_registers(device, filter_name: str, json_output: bool) -> None:
@@ -406,23 +399,28 @@ def _list_registers(device, filter_name: str, json_output: bool) -> None:
         for r in p.registers:
             if not r.enabled:
                 continue
-            items.append({
-                "peripheral": p.name,
-                "name": r.name,
-                "offset": f"0x{r.address_offset:X}",
-                "address": f"0x{r.absolute_address:08X}",
-                "fields": len(r.fields),
-            })
+            items.append(
+                {
+                    "peripheral": p.name,
+                    "name": r.name,
+                    "offset": f"0x{r.address_offset:X}",
+                    "address": f"0x{r.absolute_address:08X}",
+                    "fields": len(r.fields),
+                }
+            )
     if json_output:
         typer.echo(json.dumps(items, indent=2))
     else:
         if not items:
             typer.echo("No registers found.")
             return
-        _table(["Peripheral", "Register", "Offset", "Address", "Fields"], [
-            [i["peripheral"], i["name"], i["offset"], i["address"], str(i["fields"])]
-            for i in items
-        ])
+        _table(
+            ["Peripheral", "Register", "Offset", "Address", "Fields"],
+            [
+                [i["peripheral"], i["name"], i["offset"], i["address"], str(i["fields"])]
+                for i in items
+            ],
+        )
 
 
 def _list_fields(device, filter_path: str, json_output: bool) -> None:
@@ -441,13 +439,15 @@ def _list_fields(device, filter_path: str, json_output: bool) -> None:
             for f in r.fields:
                 if not f.enabled:
                     continue
-                items.append({
-                    "peripheral": p.name,
-                    "register": r.name,
-                    "name": f.name,
-                    "bits": f"[{f.msb}:{f.lsb}]",
-                    "access": f.access.value if f.access else "",
-                })
+                items.append(
+                    {
+                        "peripheral": p.name,
+                        "register": r.name,
+                        "name": f.name,
+                        "bits": f"[{f.msb}:{f.lsb}]",
+                        "access": f.access.value if f.access else "",
+                    }
+                )
     if json_output:
         typer.echo(json.dumps(items, indent=2))
     else:
@@ -456,8 +456,7 @@ def _list_fields(device, filter_path: str, json_output: bool) -> None:
             return
         _table(
             ["Peripheral", "Register", "Field", "Bits", "Access"],
-            [[i["peripheral"], i["register"], i["name"], i["bits"], i["access"]]
-             for i in items],
+            [[i["peripheral"], i["register"], i["name"], i["bits"], i["access"]] for i in items],
         )
 
 

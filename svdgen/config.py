@@ -171,9 +171,7 @@ def _build_config(raw: dict[str, Any], config_dir: Path) -> ProjectConfig:
 
 def _build_target(raw: dict[str, Any], index: int) -> TargetConfig:
     if not isinstance(raw, dict):
-        raise ValueError(
-            f"Target entry {index} must be a table, got {type(raw).__name__}"
-        )
+        raise ValueError(f"Target entry {index} must be a table, got {type(raw).__name__}")
     name = raw.get("name", "")
     if not name:
         raise ValueError(f"Target entry {index} missing required 'name'")
@@ -247,6 +245,5 @@ def _check_template_resolvable(
         if (d / target.template).exists():
             return
     collector.warning(
-        f"Target {target.name!r}: template {target.template!r} "
-        f"not found in any template directory"
+        f"Target {target.name!r}: template {target.template!r} not found in any template directory"
     )

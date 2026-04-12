@@ -179,18 +179,18 @@ def _render_target(
             )
             continue
 
-        artifacts.append(RenderArtifact(
-            path=resolved_path,
-            content=content,
-            target_name=target.name,
-        ))
+        artifacts.append(
+            RenderArtifact(
+                path=resolved_path,
+                content=content,
+                target_name=target.name,
+            )
+        )
 
     return artifacts
 
 
-def _iterate_scope(
-    device: Device, scope: Scope
-) -> list[dict[str, Any]]:
+def _iterate_scope(device: Device, scope: Scope) -> list[dict[str, Any]]:
     if scope == Scope.DEVICE:
         return [{"_scope_label": device.name}]
 
@@ -212,19 +212,19 @@ def _iterate_scope(
             for r in p.registers:
                 if not r.enabled:
                     continue
-                contexts.append({
-                    "peripheral": p,
-                    "register": r,
-                    "_scope_label": f"{p.name}.{r.name}",
-                })
+                contexts.append(
+                    {
+                        "peripheral": p,
+                        "register": r,
+                        "_scope_label": f"{p.name}.{r.name}",
+                    }
+                )
         return contexts
 
     return []
 
 
-def _check_collisions(
-    artifacts: list[RenderArtifact], collector: DiagnosticCollector
-) -> None:
+def _check_collisions(artifacts: list[RenderArtifact], collector: DiagnosticCollector) -> None:
     seen: dict[str, str] = {}
     for art in artifacts:
         if art.path in seen:

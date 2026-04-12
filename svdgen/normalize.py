@@ -61,10 +61,12 @@ def normalize(result: ParseResult) -> Device:
 
 
 def _normalize_device(raw: SVDDevice) -> Device:
-    peripherals = tuple(sorted(
-        (_normalize_peripheral(p) for p in raw.get_peripherals()),
-        key=lambda p: p.base_address,
-    ))
+    peripherals = tuple(
+        sorted(
+            (_normalize_peripheral(p) for p in raw.get_peripherals()),
+            key=lambda p: p.base_address,
+        )
+    )
 
     return Device(
         name=_clean_name(raw.name),
@@ -115,22 +117,21 @@ def _normalize_cpu(raw: SVDCpu) -> CPU:
 def _normalize_peripheral(raw: SVDPeripheralRaw) -> Peripheral:
     periph_name = _clean_name(raw.name)
 
-    registers = tuple(sorted(
-        (
-            _normalize_register(r, periph_name, raw.base_address)
-            for r in raw.get_registers()
-        ),
-        key=lambda r: r.address_offset,
-    ))
-
-    interrupts = tuple(sorted(
-        (_normalize_interrupt(i, periph_name) for i in (raw.interrupts or [])),
-        key=lambda i: i.value,
-    ))
-
-    address_blocks = tuple(
-        _normalize_address_block(ab) for ab in (raw.address_blocks or [])
+    registers = tuple(
+        sorted(
+            (_normalize_register(r, periph_name, raw.base_address) for r in raw.get_registers()),
+            key=lambda r: r.address_offset,
+        )
     )
+
+    interrupts = tuple(
+        sorted(
+            (_normalize_interrupt(i, periph_name) for i in (raw.interrupts or [])),
+            key=lambda i: i.value,
+        )
+    )
+
+    address_blocks = tuple(_normalize_address_block(ab) for ab in (raw.address_blocks or []))
 
     return Peripheral(
         name=periph_name,
@@ -151,16 +152,16 @@ def _normalize_peripheral(raw: SVDPeripheralRaw) -> Peripheral:
 # ---------------------------------------------------------------------------
 
 
-def _normalize_register(
-    raw: SVDRegisterRaw, periph_name: str, base_address: int
-) -> Register:
+def _normalize_register(raw: SVDRegisterRaw, periph_name: str, base_address: int) -> Register:
     reg_name = _clean_name(raw.name)
     source_path = f"{periph_name}.{reg_name}"
 
-    fields = tuple(sorted(
-        (_normalize_field(f, source_path) for f in raw.get_fields()),
-        key=lambda f: f.bit_offset,
-    ))
+    fields = tuple(
+        sorted(
+            (_normalize_field(f, source_path) for f in raw.get_fields()),
+            key=lambda f: f.bit_offset,
+        )
+    )
 
     return Register(
         name=reg_name,
@@ -188,9 +189,7 @@ def _normalize_field(raw: SVDFieldRaw, reg_source_path: str) -> Field:
 
     enum_sets: tuple[EnumeratedValueSet, ...] = ()
     if raw.enumerated_values:
-        enum_sets = tuple(
-            _normalize_enum_set(ev) for ev in raw.enumerated_values
-        )
+        enum_sets = tuple(_normalize_enum_set(ev) for ev in raw.enumerated_values)
 
     return Field(
         name=field_name,
@@ -210,9 +209,7 @@ def _normalize_field(raw: SVDFieldRaw, reg_source_path: str) -> Field:
 
 
 def _normalize_enum_set(raw: SVDEnumVals) -> EnumeratedValueSet:
-    values = tuple(
-        _normalize_enum_value(ev) for ev in raw.enumerated_values
-    )
+    values = tuple(_normalize_enum_value(ev) for ev in raw.enumerated_values)
     usage = raw.usage.value if raw.usage is not None else None
     return EnumeratedValueSet(name=raw.name, usage=usage, values=values)
 

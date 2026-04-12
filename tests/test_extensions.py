@@ -69,11 +69,17 @@ class TestCustomFilters:
         tpl.write_text("{{ device.name | shout }}")
 
         device = _make_device()
-        targets = [OutputTarget(
-            name="t", template="test.j2", output_path="out.txt",
-        )]
+        targets = [
+            OutputTarget(
+                name="t",
+                template="test.j2",
+                output_path="out.txt",
+            )
+        ]
         result = render_targets(
-            device, targets, [tmp_path],
+            device,
+            targets,
+            [tmp_path],
             custom_filters={"shout": lambda s: s.upper() + "!!!"},
         )
         assert len(result.artifacts) == 1
@@ -84,12 +90,18 @@ class TestCustomFilters:
         tpl.write_text("{{ device.name | upper_snake }}")
 
         device = _make_device()
-        targets = [OutputTarget(
-            name="t", template="test.j2", output_path="out.txt",
-        )]
+        targets = [
+            OutputTarget(
+                name="t",
+                template="test.j2",
+                output_path="out.txt",
+            )
+        ]
 
         result = render_targets(
-            device, targets, [tmp_path],
+            device,
+            targets,
+            [tmp_path],
             custom_filters={"upper_snake": lambda s: f"CUSTOM_{s}"},
         )
         assert result.artifacts[0].content == "CUSTOM_TestDevice"
@@ -99,11 +111,18 @@ class TestCustomFilters:
         tpl.write_text("{{ device.name | upper_snake }}")
 
         device = _make_device()
-        targets = [OutputTarget(
-            name="t", template="test.j2", output_path="out.txt",
-        )]
+        targets = [
+            OutputTarget(
+                name="t",
+                template="test.j2",
+                output_path="out.txt",
+            )
+        ]
         result = render_targets(
-            device, targets, [tmp_path], custom_filters=None,
+            device,
+            targets,
+            [tmp_path],
+            custom_filters=None,
         )
         assert result.artifacts[0].content == "TEST_DEVICE"
 
@@ -114,11 +133,17 @@ class TestCustomGlobals:
         tpl.write_text("{{ project_prefix }}_{{ device.name }}")
 
         device = _make_device()
-        targets = [OutputTarget(
-            name="t", template="test.j2", output_path="out.txt",
-        )]
+        targets = [
+            OutputTarget(
+                name="t",
+                template="test.j2",
+                output_path="out.txt",
+            )
+        ]
         result = render_targets(
-            device, targets, [tmp_path],
+            device,
+            targets,
+            [tmp_path],
             custom_globals={"project_prefix": "HAL"},
         )
         assert result.artifacts[0].content == "HAL_TestDevice"
@@ -128,11 +153,17 @@ class TestCustomGlobals:
         tpl.write_text("{{ repeat(device.name, 2) }}")
 
         device = _make_device()
-        targets = [OutputTarget(
-            name="t", template="test.j2", output_path="out.txt",
-        )]
+        targets = [
+            OutputTarget(
+                name="t",
+                template="test.j2",
+                output_path="out.txt",
+            )
+        ]
         result = render_targets(
-            device, targets, [tmp_path],
+            device,
+            targets,
+            [tmp_path],
             custom_globals={"repeat": lambda s, n: (s + " ") * n},
         )
         assert result.artifacts[0].content.strip() == "TestDevice TestDevice"
@@ -144,9 +175,7 @@ class TestCustomGlobals:
 
 
 class TestPipelineExtensions:
-    def test_custom_filter_through_pipeline(
-        self, tmp_path: Path, minimal_svd: Path
-    ):
+    def test_custom_filter_through_pipeline(self, tmp_path: Path, minimal_svd: Path):
         tpl = tmp_path / "test.j2"
         tpl.write_text("{{ device.name | reverse_str }}")
         cfg_path = tmp_path / "svdgen.toml"
@@ -158,7 +187,7 @@ svd = "{minimal_svd}"
 dirs = ["{tmp_path}"]
 
 [output]
-dir = "{tmp_path / 'gen'}"
+dir = "{tmp_path / "gen"}"
 
 [[targets]]
 name = "rev"
@@ -174,9 +203,7 @@ output_path = "rev.txt"
         content = (tmp_path / "gen" / "rev.txt").read_text()
         assert content == "eciveDtseT"
 
-    def test_custom_global_through_pipeline(
-        self, tmp_path: Path, minimal_svd: Path
-    ):
+    def test_custom_global_through_pipeline(self, tmp_path: Path, minimal_svd: Path):
         tpl = tmp_path / "test.j2"
         tpl.write_text("{{ banner }}:{{ device.name }}")
         cfg_path = tmp_path / "svdgen.toml"
@@ -188,7 +215,7 @@ svd = "{minimal_svd}"
 dirs = ["{tmp_path}"]
 
 [output]
-dir = "{tmp_path / 'gen'}"
+dir = "{tmp_path / "gen"}"
 
 [[targets]]
 name = "g"
@@ -234,4 +261,5 @@ class TestBuiltinFilterImports:
 
     def test_access_str_importable(self):
         from svdgen import AccessType
+
         assert svdgen.access_str(AccessType.READ_ONLY) == "RO"

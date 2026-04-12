@@ -39,9 +39,16 @@ from .model import AccessType, Device, Field, Peripheral, Register
 _ACTIONS = frozenset({"rename", "set", "remove", "disable"})
 
 _SETTABLE_PERIPHERAL = frozenset({"description", "group_name"})
-_SETTABLE_REGISTER = frozenset({
-    "description", "access", "reset_value", "reset_mask", "size", "display_name",
-})
+_SETTABLE_REGISTER = frozenset(
+    {
+        "description",
+        "access",
+        "reset_value",
+        "reset_mask",
+        "size",
+        "display_name",
+    }
+)
 _SETTABLE_FIELD = frozenset({"description", "access", "bit_offset", "bit_width"})
 
 
@@ -347,9 +354,7 @@ def _replace_register(device: Device, pidx: int, ridx: int, new_reg: Register) -
     return _replace_peripheral(device, pidx, new_periph)
 
 
-def _replace_field(
-    device: Device, pidx: int, ridx: int, fidx: int, new_field: Field
-) -> Device:
+def _replace_field(device: Device, pidx: int, ridx: int, fidx: int, new_field: Field) -> Device:
     reg = device.peripherals[pidx].registers[ridx]
     new_fields = _tuple_replace(reg.fields, fidx, new_field)
     new_reg = replace(reg, fields=new_fields)
@@ -394,17 +399,14 @@ def _set_properties(
     return replace(node, **kwargs) if kwargs else node
 
 
-def _coerce_access(
-    value: Any, patch: Patch, collector: DiagnosticCollector
-) -> AccessType | None:
+def _coerce_access(value: Any, patch: Patch, collector: DiagnosticCollector) -> AccessType | None:
     if value is None:
         return None
     try:
         return AccessType(value)
     except ValueError:
         collector.error(
-            f"Invalid access type {value!r}; "
-            f"valid: {[a.value for a in AccessType]}",
+            f"Invalid access type {value!r}; valid: {[a.value for a in AccessType]}",
             file_path=patch.source_file,
             element_path=patch.target,
         )

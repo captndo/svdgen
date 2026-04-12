@@ -30,7 +30,10 @@ class TestDeviceScope:
         tpl = tmp_path / "dev.h.j2"
         tpl.write_text("/* {{ device.name }} */\n")
         target = OutputTarget(
-            name="dev", template="dev.h.j2", output_path="device.h", scope=Scope.DEVICE,
+            name="dev",
+            template="dev.h.j2",
+            output_path="device.h",
+            scope=Scope.DEVICE,
         )
         result = render_targets(device, [target], [tmp_path])
         assert len(result.artifacts) == 1
@@ -43,7 +46,8 @@ class TestPeripheralScope:
         tpl = tmp_path / "periph.j2"
         tpl.write_text("{{ peripheral.name }}")
         target = OutputTarget(
-            name="periph", template="periph.j2",
+            name="periph",
+            template="periph.j2",
             output_path="{{ peripheral.name }}.h",
             scope=Scope.PERIPHERAL,
         )
@@ -56,7 +60,8 @@ class TestPeripheralScope:
         tpl = tmp_path / "periph.j2"
         tpl.write_text("ok")
         target = OutputTarget(
-            name="p", template="periph.j2",
+            name="p",
+            template="periph.j2",
             output_path="include/{{ peripheral.name | lower }}.h",
             scope=Scope.PERIPHERAL,
         )
@@ -70,7 +75,8 @@ class TestRegisterScope:
         tpl = tmp_path / "reg.j2"
         tpl.write_text("{{ peripheral.name }}.{{ register.name }}")
         target = OutputTarget(
-            name="reg", template="reg.j2",
+            name="reg",
+            template="reg.j2",
             output_path="{{ peripheral.name }}_{{ register.name }}.txt",
             scope=Scope.REGISTER,
         )
@@ -151,7 +157,9 @@ class TestExtraContext:
         tpl = tmp_path / "tv.j2"
         tpl.write_text("{{ guard_prefix }}")
         target = OutputTarget(
-            name="tv", template="tv.j2", output_path="tv.txt",
+            name="tv",
+            template="tv.j2",
+            output_path="tv.txt",
             variables={"guard_prefix": "MY_PROJECT"},
         )
         result = render_targets(device, [target], [tmp_path])
@@ -166,7 +174,8 @@ class TestExtraContext:
 class TestBuiltinTemplate:
     def test_c_header_renders(self, device: Device):
         target = OutputTarget(
-            name="c_hdr", template="c_header/peripheral.h.j2",
+            name="c_hdr",
+            template="c_header/peripheral.h.j2",
             output_path="{{ peripheral.name | lower }}.h",
             scope=Scope.PERIPHERAL,
         )
@@ -177,7 +186,8 @@ class TestBuiltinTemplate:
 
     def test_c_header_content(self, device: Device):
         target = OutputTarget(
-            name="c_hdr", template="c_header/peripheral.h.j2",
+            name="c_hdr",
+            template="c_header/peripheral.h.j2",
             output_path="{{ peripheral.name | lower }}.h",
             scope=Scope.PERIPHERAL,
         )

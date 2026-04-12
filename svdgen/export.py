@@ -37,10 +37,7 @@ def export_json(
 
 def _convert(obj: Any) -> Any:
     if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
-        return {
-            f.name: _convert(getattr(obj, f.name))
-            for f in dataclasses.fields(obj)
-        }
+        return {f.name: _convert(getattr(obj, f.name)) for f in dataclasses.fields(obj)}
     if isinstance(obj, Enum):
         return obj.value
     if isinstance(obj, (tuple, list)):

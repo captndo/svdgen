@@ -97,15 +97,25 @@ class TestAccessStr:
 class TestBitRange:
     def test_basic(self):
         f = Field(
-            name="F", raw_name="F", description=None,
-            bit_offset=0, bit_width=4, access=None, enumerated_values=(),
+            name="F",
+            raw_name="F",
+            description=None,
+            bit_offset=0,
+            bit_width=4,
+            access=None,
+            enumerated_values=(),
         )
         assert bit_range(f) == "[3:0]"
 
     def test_single_bit(self):
         f = Field(
-            name="F", raw_name="F", description=None,
-            bit_offset=7, bit_width=1, access=None, enumerated_values=(),
+            name="F",
+            raw_name="F",
+            description=None,
+            bit_offset=7,
+            bit_width=1,
+            access=None,
+            enumerated_values=(),
         )
         assert bit_range(f) == "[7:7]"
 

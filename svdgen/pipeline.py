@@ -75,11 +75,13 @@ def run(
         try:
             patch_set = load_patches(patch_path)
         except (FileNotFoundError, ValueError) as exc:
-            all_diags.append(Diagnostic(
-                severity=Severity.ERROR,
-                message=str(exc),
-                file_path=patch_path,
-            ))
+            all_diags.append(
+                Diagnostic(
+                    severity=Severity.ERROR,
+                    message=str(exc),
+                    file_path=patch_path,
+                )
+            )
             result.diagnostics = all_diags
             return result
 
@@ -135,6 +137,7 @@ def run(
 
 def _target_from_config(tc: ProjectConfig) -> OutputTarget:
     from .config import TargetConfig
+
     assert isinstance(tc, TargetConfig)
     return OutputTarget(
         name=tc.name,

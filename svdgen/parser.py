@@ -75,9 +75,7 @@ def _build_source_map(path: Path, collector: DiagnosticCollector) -> SourceMap:
         return SourceMap(path)
 
 
-def _parse_device(
-    path: Path, validate: bool, collector: DiagnosticCollector
-) -> SVDDevice:
+def _parse_device(path: Path, validate: bool, collector: DiagnosticCollector) -> SVDDevice:
     try:
         svd_parser = SVDParser.for_xml_file(str(path))
         with _capture_stdout() as buf:
@@ -123,7 +121,5 @@ def _extract_warnings(captured: str, file_path: Path) -> list[Diagnostic]:
             continue
         match = _WARNING_RE.match(text)
         msg = match.group(1) if match else text
-        diagnostics.append(
-            Diagnostic(severity=Severity.WARNING, message=msg, file_path=file_path)
-        )
+        diagnostics.append(Diagnostic(severity=Severity.WARNING, message=msg, file_path=file_path))
     return diagnostics

@@ -23,12 +23,14 @@ def _write_config(tmp_path: Path, toml: str) -> Path:
 def _minimal_config(tmp_path: Path, minimal_svd: Path, **extra) -> Path:
     tpl_dir = extra.get("tpl_dir", "")
     tpl_dirs_line = f'dirs = ["{tpl_dir}"]' if tpl_dir else ""
-    return _write_config(tmp_path, f"""
+    return _write_config(
+        tmp_path,
+        f"""
 [input]
 svd = "{minimal_svd}"
 
 [output]
-dir = "{tmp_path / 'gen'}"
+dir = "{tmp_path / "gen"}"
 
 [templates]
 {tpl_dirs_line}
@@ -38,7 +40,8 @@ name = "hdr"
 template = "c_header/peripheral.h.j2"
 output_path = "include/{{{{peripheral.name | lower}}}}.h"
 scope = "peripheral"
-""")
+""",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -66,7 +69,9 @@ class TestGenerate:
         assert result.exit_code == 2
 
     def test_missing_svd(self, tmp_path: Path):
-        cfg = _write_config(tmp_path, """
+        cfg = _write_config(
+            tmp_path,
+            """
 [input]
 svd = "nonexistent.svd"
 
@@ -74,7 +79,8 @@ svd = "nonexistent.svd"
 name = "x"
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         result = runner.invoke(app, ["generate", "-c", str(cfg)])
         assert result.exit_code == 1
 
@@ -92,7 +98,9 @@ class TestValidate:
         assert "passed" in result.stdout.lower()
 
     def test_invalid(self, tmp_path: Path):
-        cfg = _write_config(tmp_path, """
+        cfg = _write_config(
+            tmp_path,
+            """
 [input]
 svd = "nonexistent.svd"
 
@@ -100,7 +108,8 @@ svd = "nonexistent.svd"
 name = "x"
 template = "t.j2"
 output_path = "o.h"
-""")
+""",
+        )
         result = runner.invoke(app, ["validate", "-c", str(cfg)])
         assert result.exit_code == 1
         assert "failed" in result.stdout.lower() or "error" in result.stdout.lower()
@@ -140,9 +149,7 @@ class TestInspect:
 
     def test_json_output(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["inspect", "GPIOA", "-c", str(cfg), "--json"]
-        )
+        result = runner.invoke(app, ["inspect", "GPIOA", "-c", str(cfg), "--json"])
         assert result.exit_code == 0
         data = json.loads(result.stdout)
         assert data["name"] == "GPIOA"
@@ -176,9 +183,7 @@ class TestList:
 
     def test_peripherals_json(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "peripherals", "-c", str(cfg), "--json"]
-        )
+        result = runner.invoke(app, ["list", "peripherals", "-c", str(cfg), "--json"])
         assert result.exit_code == 0
         data = json.loads(result.stdout)
         assert len(data) == 2
@@ -187,18 +192,14 @@ class TestList:
 
     def test_registers(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "registers", "GPIOA", "-c", str(cfg)]
-        )
+        result = runner.invoke(app, ["list", "registers", "GPIOA", "-c", str(cfg)])
         assert result.exit_code == 0
         assert "MODER" in result.stdout
         assert "ODR" in result.stdout
 
     def test_registers_json(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "registers", "GPIOA", "-c", str(cfg), "--json"]
-        )
+        result = runner.invoke(app, ["list", "registers", "GPIOA", "-c", str(cfg), "--json"])
         assert result.exit_code == 0
         data = json.loads(result.stdout)
         names = {d["name"] for d in data}
@@ -206,18 +207,14 @@ class TestList:
 
     def test_fields(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "fields", "GPIOA.MODER", "-c", str(cfg)]
-        )
+        result = runner.invoke(app, ["list", "fields", "GPIOA.MODER", "-c", str(cfg)])
         assert result.exit_code == 0
         assert "MODE0" in result.stdout
         assert "MODE1" in result.stdout
 
     def test_fields_json(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "fields", "GPIOA.MODER", "-c", str(cfg), "--json"]
-        )
+        result = runner.invoke(app, ["list", "fields", "GPIOA.MODER", "-c", str(cfg), "--json"])
         assert result.exit_code == 0
         data = json.loads(result.stdout)
         names = {d["name"] for d in data}
@@ -231,9 +228,7 @@ class TestList:
 
     def test_targets_json(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
-        result = runner.invoke(
-            app, ["list", "targets", "-c", str(cfg), "--json"]
-        )
+        result = runner.invoke(app, ["list", "targets", "-c", str(cfg), "--json"])
         assert result.exit_code == 0
         data = json.loads(result.stdout)
         assert data[0]["name"] == "hdr"
@@ -255,9 +250,7 @@ class TestExportModel:
     def test_to_file(self, tmp_path: Path, minimal_svd: Path):
         cfg = _minimal_config(tmp_path, minimal_svd)
         out = tmp_path / "model.json"
-        result = runner.invoke(
-            app, ["export-model", "-c", str(cfg), "-o", str(out)]
-        )
+        result = runner.invoke(app, ["export-model", "-c", str(cfg), "-o", str(out)])
         assert result.exit_code == 0
         data = json.loads(out.read_text())
         assert data["name"] == "TestDevice"
