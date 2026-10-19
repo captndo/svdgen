@@ -101,6 +101,8 @@ patched      = svdgen.apply_patches(device, patch_set).device
 - [Patch Files](docs/patches.md) — YAML patch format, operations, cookbook
 - [Template Authoring](docs/templates.md) — Jinja context, built-in filters, scope
 - [Python API Reference](docs/python-api.md) — programmatic usage
+- [Pipeline Architecture](docs/pipeline.md) — stages, diagnostics, and extension points
+- [Product Requirements](docs/requirements.md) — product scope and roadmap goals
 
 ## Examples
 
