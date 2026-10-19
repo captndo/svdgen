@@ -59,17 +59,31 @@ def hex_format(value: int | None, width: int = 8) -> str:
 
 
 def c_comment(text: str | None) -> str:
-    """Wrap *text* in a C block comment: ``/* text */``."""
+    """Wrap *text* in a C block comment.
+
+    Single-line input: ``/* text */``.
+    Multi-line input uses a block with leading asterisks::
+
+        /*
+         * line1
+         * line2
+         */
+    """
     if not text:
         return "/* */"
-    return f"/* {text} */"
+    lines = text.splitlines()
+    if len(lines) == 1:
+        return f"/* {text} */"
+    body = "\n".join(f" * {line}" if line else " *" for line in lines)
+    return f"/*\n{body}\n */"
 
 
 def c_line_comment(text: str | None) -> str:
-    """Format *text* as a C line comment: ``// text``."""
+    """Format *text* as C line comment(s): each line gets a ``// `` prefix."""
     if not text:
         return "//"
-    return f"// {text}"
+    lines = text.splitlines()
+    return "\n".join(f"// {line}" if line else "//" for line in lines)
 
 
 # ---------------------------------------------------------------------------

@@ -70,11 +70,23 @@ class TestCommentFormatting:
     def test_c_comment_empty(self):
         assert c_comment("") == "/* */"
 
+    def test_c_comment_multiline(self):
+        assert c_comment("a\nb") == "/*\n * a\n * b\n */"
+
+    def test_c_comment_multiline_blank_line(self):
+        assert c_comment("a\n\nb") == "/*\n * a\n *\n * b\n */"
+
     def test_c_line_comment(self):
         assert c_line_comment("hello") == "// hello"
 
     def test_c_line_comment_none(self):
         assert c_line_comment(None) == "//"
+
+    def test_c_line_comment_multiline(self):
+        assert c_line_comment("a\nb") == "// a\n// b"
+
+    def test_c_line_comment_multiline_blank(self):
+        assert c_line_comment("a\n\nb") == "// a\n//\n// b"
 
 
 class TestAccessStr:
