@@ -152,6 +152,8 @@ All filters are registered automatically. They are also importable from the `svd
 | `c_comment`      | `None`    | `"/* */"`         |
 | `c_line_comment` | `"text"`  | `"// text"`       |
 | `c_line_comment` | `None`    | `"//"`            |
+| `c_comment`      | `"a\nb"` | `"/*\n * a\n * b\n */"` |
+| `c_line_comment` | `"a\nb"` | `"// a\n// b"` |
 
 ```jinja
 {{ register.description | c_comment }}
